@@ -1,8 +1,10 @@
 import React from 'react';
-import { View, Platform, KeyboardAvoidingView, StyleSheet, LogBox } from 'react-native';
+import { View, Platform, KeyboardAvoidingView, StyleSheet, LogBox, Pressable } from 'react-native';
 import { Bubble, GiftedChat, InputToolbar } from 'react-native-gifted-chat';
 import AsyncStorage from '@react-native-community/async-storage';
 import NetInfo from '@react-native-community/netinfo';
+import MapView from 'react-native-maps';
+import CustomActions from './CustomActions';
 
 const firebase = require('firebase');
 require('firebase/firestore');
@@ -10,11 +12,13 @@ require('firebase/firestore');
 export default class Chat extends React.Component {
   constructor(props) {
     super(props);
-    LogBox.ignoreLogs(['Setting a timer']);
+    LogBox.ignoreLogs(['Setting a timer', 'Animated']);
     this.state = {
       messages: [],
       uid: '',
       isConnected: false,
+      image: null,
+      location: null,
     }
     // firebase configuration
     const firebaseConfig = {
@@ -46,6 +50,8 @@ export default class Chat extends React.Component {
         text: data.text,
         createdAt: data.createdAt.toDate(),
         user: data.user,
+        image: data.image,
+        location: data.location,
       });
     });
     // sorts messages array by createdAt
@@ -89,9 +95,11 @@ export default class Chat extends React.Component {
     const message = this.state.messages[0];
     this.referenceMessages.add({
       _id: message._id,
-      text: message.text,
+      text: message.text || '',
       createdAt: message.createdAt,
       user: message.user,
+      image: message.image || null,
+      location: message.location || null,
     });
   };
 
@@ -166,6 +174,35 @@ export default class Chat extends React.Component {
     }
   }
 
+  renderCustomActions = (props) => {
+    return <CustomActions {...props} />;
+  }
+
+  renderCustomView = (props) => {
+    const { currentMessage } = props;
+    if (currentMessage.location) {
+      return (
+        <View>
+          <MapView
+            style={{
+              width: 150,
+              height: 100,
+              borderRadius: 13,
+              margin: 3
+            }}
+            region={{
+              latitude: currentMessage.location.latitude,
+              longitude: currentMessage.location.longitude,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+          />
+        </View>
+      );
+    }
+    return null;
+  }
+
   // appends new message to messages array on send and calls addMessage function
   onSend(messages = []) {
     this.setState(
@@ -177,6 +214,7 @@ export default class Chat extends React.Component {
         this.saveMessages();
       }
     );
+
   }
 
   render() {
@@ -188,12 +226,22 @@ export default class Chat extends React.Component {
           renderBubble={this.renderBubble.bind(this)}
           // enables hiding input if offline - based on function
           renderInputToolbar={this.renderInputToolbar.bind(this)}
+          // enables additional actions including sending photos and location
+          renderActions={this.renderCustomActions.bind(this)}
+          // renders custom view for locations
+          renderCustomView={this.renderCustomView.bind(this)}
           // pulls messages array from state
           messages={this.state.messages}
           // on send, triggers onSend function to append new message to messages in state
           onSend={messages => this.onSend(messages)}
           user={this.state.user}
         />
+        {this.state.image &&
+          <Image
+            source={{ uri: this.state.image.uri }}
+            style={{ width: 200, height: 200 }}
+          />
+        }
         {/* if OS is android, adds KeyboardAvoidingView to prevent keyboard from covering input box */}
         { Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null
         }
