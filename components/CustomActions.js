@@ -9,6 +9,7 @@ import 'firebase/firestore';
 
 export default class CustomActions extends React.Component {
 
+  // defines custom actions for when a user taps the + button for more options
   onActionPress = () => {
     const options = ['Choose from Library', 'Take Picture', 'Send Location', 'Cancel'];
     const cancelButtonIndex = options.length - 1;
@@ -33,6 +34,7 @@ export default class CustomActions extends React.Component {
     );
   }
 
+  // uploads image to firebase - for new or existing images
   uploadImage = async (uri) => {
     try {
       const blob = await new Promise((resolve, reject) => {
@@ -65,7 +67,7 @@ export default class CustomActions extends React.Component {
     }
   }
 
-
+  // selects image from local device
   pickImage = async () => {
     const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
 
@@ -81,6 +83,7 @@ export default class CustomActions extends React.Component {
     }
   }
 
+  // uses device camera to take a new photo
   takePhoto = async () => {
     let { status } = await Permissions.askAsync(Permissions.CAMERA);
     if (status === 'granted') {
@@ -97,6 +100,7 @@ export default class CustomActions extends React.Component {
     }
   }
 
+  // gets device location
   getLocation = async () => {
     const { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status === 'granted') {
@@ -116,6 +120,7 @@ export default class CustomActions extends React.Component {
     }
   }
 
+  // renders custom actions button & menu
   render() {
     return (
       <Pressable

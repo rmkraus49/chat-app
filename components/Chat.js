@@ -12,7 +12,10 @@ require('firebase/firestore');
 export default class Chat extends React.Component {
   constructor(props) {
     super(props);
+
+    // suppresses warnings caused by libraries
     LogBox.ignoreLogs(['Setting a timer', 'Animated']);
+
     this.state = {
       messages: [],
       uid: '',
@@ -62,6 +65,7 @@ export default class Chat extends React.Component {
     });
   }
 
+  // loads messages from local async storage
   getMessages = async () => {
     let messages = [];
     try {
@@ -74,6 +78,7 @@ export default class Chat extends React.Component {
     }
   };
 
+  // saves messages array to local async storage
   saveMessages = async () => {
     try {
       await AsyncStorage.setItem('messages', JSON.stringify(this.state.messages));
@@ -82,6 +87,7 @@ export default class Chat extends React.Component {
     }
   }
 
+  // removes saved messages from local async storage
   deleteMessages = async () => {
     try {
       await AsyncStorage.removeItem('messages');
@@ -148,6 +154,7 @@ export default class Chat extends React.Component {
     });
   }
 
+  // fires both unsubscribe & refresh functions on unmount
   componentWillUnmount() {
     this.authUnsubscribe();
     this.unsubscribe();
@@ -179,10 +186,12 @@ export default class Chat extends React.Component {
     }
   }
 
+  //  makes CustomActions available to chat interface; for sending location, new photo, or saved photo
   renderCustomActions = (props) => {
     return <CustomActions {...props} />;
   }
 
+  // creates a custom view to display a map when a message contains location data
   renderCustomView = (props) => {
     const { currentMessage } = props;
     if (currentMessage.location) {
@@ -254,6 +263,8 @@ export default class Chat extends React.Component {
     );
   }
 }
+
+// style sheet configures base container & text box only
 
 const styles = StyleSheet.create({
   chatContainer: {
