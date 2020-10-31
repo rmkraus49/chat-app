@@ -67,52 +67,64 @@ export default class CustomActions extends React.Component {
 
 
   pickImage = async () => {
-    const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+    try {
+      const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
 
-    if (status === 'granted') {
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: 'Images',
-      }).catch(error => console.log(error));
-
-      if (!result.cancelled) {
-        const imageUrl = await this.uploadImage(result.uri);
-        this.props.onSend({ image: imageUrl });
-      }
-    }
-  }
-
-  takePhoto = async () => {
-    let { status } = await Permissions.askAsync(Permissions.CAMERA);
-    if (status === 'granted') {
-      let { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
       if (status === 'granted') {
-        let result = await ImagePicker.launchCameraAsync({
+        let result = await ImagePicker.launchImageLibraryAsync({
           mediaTypes: 'Images',
         }).catch(error => console.log(error));
+
         if (!result.cancelled) {
           const imageUrl = await this.uploadImage(result.uri);
           this.props.onSend({ image: imageUrl });
         }
       }
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  takePhoto = async () => {
+    try {
+      let { status } = await Permissions.askAsync(Permissions.CAMERA);
+      if (status === 'granted') {
+        let { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+        if (status === 'granted') {
+          let result = await ImagePicker.launchCameraAsync({
+            mediaTypes: 'Images',
+          }).catch(error => console.log(error));
+          if (!result.cancelled) {
+            const imageUrl = await this.uploadImage(result.uri);
+            this.props.onSend({ image: imageUrl });
+          }
+        }
+      }
+    } catch (error) {
+      console.log(error.message);
     }
   }
 
   getLocation = async () => {
-    const { status } = await Permissions.askAsync(Permissions.LOCATION);
-    if (status === 'granted') {
-      try {
-        let result = await Location.getCurrentPositionAsync({});
-        if (result) {
-          this.props.onSend({
-            location: {
-              longitude: result.coords.longitude,
-              latitude: result.coords.latitude,
-            },
-          });
+    try {
+      const { status } = await Permissions.askAsync(Permissions.LOCATION);
+      if (status === 'granted') {
+        try {
+          let result = await Location.getCurrentPositionAsync({});
+          if (result) {
+            this.props.onSend({
+              location: {
+                longitude: result.coords.longitude,
+                latitude: result.coords.latitude,
+              },
+            });
+          }
+        } catch (error) {
+          console.log(error.message);
         }
-      } catch (error) {
-        console.log(error);
       }
+    } catch (error) {
+      console.log(error.message);
     }
   }
 
