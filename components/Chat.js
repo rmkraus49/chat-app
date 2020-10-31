@@ -113,23 +113,28 @@ export default class Chat extends React.Component {
 
         // sets user
         this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
-          if (!user) {
-            await firebase.auth().signInAnonymously();
-          };
-          this.setState({
-            uid: user.uid,
-            loggedInText: 'Hello!',
-            user: {
-              _id: user.uid,
-              name: this.props.route.params.name,
-              avatar: 'https://placeimg.com/140/140/any',
-            },
-          });
-          // references the active user's documents
-          this.referenceMessagesUser = firebase.firestore().collection('messages').where("uid", "==", this.state.uid);
+          try {
+            if (!user) {
+              await firebase.auth().signInAnonymously();
+            };
+            const name = this.props.route.params.name;
+            this.setState({
+              uid: user.uid,
+              loggedInText: `${name} has entered the chat.`,
+              user: {
+                _id: user.uid,
+                name,
+                avatar: 'https://placeimg.com/140/140/any',
+              },
+            });
+            // references the active user's documents
+            this.referenceMessagesUser = firebase.firestore().collection('messages').where("uid", "==", this.state.uid);
 
-          // listens for collection updates for the current user
-          this.unsubscribeMessageUser = this.referenceMessagesUser.onSnapshot(this.onCollectionUpdate);
+            // listens for collection updates for the current user
+            this.unsubscribeMessageUser = this.referenceMessagesUser.onSnapshot(this.onCollectionUpdate);
+          } catch (error) {
+            console.log(error.message);
+          }
         });
 
         // listener for messages collection update

@@ -1,6 +1,5 @@
-import { Assets } from '@react-navigation/stack';
-import React, { Component } from 'react';
-import { View, Text, Button, TextInput, Alert, StyleSheet, ImageBackground, Pressable } from 'react-native';
+import React from 'react';
+import { View, Text, TextInput, Alert, StyleSheet, ImageBackground, Pressable } from 'react-native';
 
 const image = require('../assets/BackgroundImage.png')
 
