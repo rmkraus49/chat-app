@@ -9,13 +9,11 @@ import Chat from './components/Chat';
 
 const Stack = createStackNavigator();
 
-export default class App extends Component {
-  constructor(props) {
-    super(props);
-  };
-
+// eslint-disable-next-line react/prefer-stateless-function
+class App extends Component {
   render() {
     return (
+      // eslint-disable-next-line react/jsx-filename-extension
       <NavigationContainer>
         <Stack.Navigator
           initialRouteName="Start"
@@ -32,7 +30,8 @@ export default class App extends Component {
           />
         </Stack.Navigator>
       </NavigationContainer>
-
     );
-  };
-};
+  }
+}
+
+export default App;
