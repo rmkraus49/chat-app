@@ -64,7 +64,6 @@ export default class Chat extends React.Component {
    * Authenticates the user with Firebase;
    * Calls {@link Chat#onCollectionUpdate};
    * @function componentDidMount
-   * 
    */
 
   componentDidMount() {
