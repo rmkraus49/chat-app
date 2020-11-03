@@ -39,7 +39,7 @@ export default class Chat extends React.Component {
     this.referenceMessages = firebase.firestore().collection('messages');
   };
 
-  onCollectionUpdate = (querySnapshot) => {
+  onCollectionUpdate = (querySnapshot = []) => {
     const messages = [];
     // loop through each document from returned query data
     querySnapshot.forEach((doc) => {
@@ -154,7 +154,7 @@ export default class Chat extends React.Component {
   }
 
   // sets color of user text bubble to black
-  renderBubble(props) {
+  renderBubble(props = []) {
     return (
       <Bubble
         {...props}
@@ -168,7 +168,7 @@ export default class Chat extends React.Component {
   }
 
   // disables input if offline
-  renderInputToolbar(props) {
+  renderInputToolbar(props = []) {
     if (this.state.isConnected == false) {
     } else {
       return (
@@ -179,11 +179,11 @@ export default class Chat extends React.Component {
     }
   }
 
-  renderCustomActions = (props) => {
+  renderCustomActions = (props = []) => {
     return <CustomActions {...props} />;
   }
 
-  renderCustomView = (props) => {
+  renderCustomView = (props = []) => {
     const { currentMessage } = props;
     if (currentMessage.location) {
       return (
@@ -219,7 +219,6 @@ export default class Chat extends React.Component {
         this.saveMessages();
       }
     );
-
   }
 
   render() {

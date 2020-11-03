@@ -33,7 +33,7 @@ export default class CustomActions extends React.Component {
     );
   }
 
-  uploadImage = async (uri) => {
+  uploadImage = async (uri = '') => {
     try {
       const blob = await new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
